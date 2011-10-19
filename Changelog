@@ -1,0 +1,26 @@
+2010-08-22  longicorn <longicorn.c@gmail.com>
+
+	* release 0.0.4
+	* Rubyが1.9.2が出てたので、それに合わせたリリース
+	* 内容は主にバグ修正
+
+2010-07-03  longicorn <longicorn.c@gmail.com>
+
+	* release 0.0.3
+	* 動作速度のアップ
+	* Mac等の一部環境で出るバグ修正
+
+2009-11-26  longicorn <longicorn.c@gmail.com>
+
+	* release 0.0.2
+	* ディレクトリ指定を行う -Dオプション の追加
+	* 新規ディレクトリの作成がエラーになる問題の修正
+	* 隠しファイルを処理対象から外した
+	* その他細かな修正
+
+2009-11-15  longicorn <longicorn.c@gmail.com>
+
+	* 新規作成
+	* lib/dirのパス名が"hoge//a"などと/が連続するのを修正
+	* -dオプションが正しく動作しないのを修正
+	* -nオプションの動作を修正
