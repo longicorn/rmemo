@@ -15,21 +15,23 @@ Rmemo view first line to be memo's title
 
 # How to use?
 ## help
-$ rmemo.rb -h
+   $ rmemo.rb -h
 
 ## search
-$ rmemo.rb -s linux
+   $ rmemo.rb -s linux
 
 ### search:ignore
-$ rmemo.rb -is linux 
+   $ rmemo.rb -is linux 
 
 ### search and title print
-$ rmemo.rb -ts linux
+   $ rmemo.rb -ts linux
 
 ### search and contents print
-$ rmemo.rb -ps linux
+   $ rmemo.rb -ps linux
 
 ### search by date
-$ rmemo.rb -ps linux -d 2013
-$ rmemo.rb -ps linux -d 2013-01
-$ rmemo.rb -ps linux -d 2013-01-03
+   $ rmemo.rb -ps linux -d 2013
+
+   $ rmemo.rb -ps linux -d 2013-01
+
+   $ rmemo.rb -ps linux -d 2013-01-03
