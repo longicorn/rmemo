@@ -1,3 +1,10 @@
+2013-03-18  longicorn <longicorn.c@gmail.com>
+
+	* release 0.0.6
+	* for ruby 2.0.0
+	* 2.0出たので、作り直し。基本的に機能は同じはず。
+	* pオプションを明示的につけるように
+
 2010-08-22  longicorn <longicorn.c@gmail.com>
 
 	* release 0.0.4

@@ -1,25 +1,89 @@
 #!/usr/bin/env ruby
-# -*- encoding: UTF-8 -*-
 
-#
-#メモツール
-#ruby 1.9のみ対応
-#
-
-require 'pp'
-require 'csv'
-require 'cgi'
-require "tempfile"
-require 'fileutils'
 require 'optparse'
-require './lib/memo'
+require 'fileutils'
+require 'tempfile'
+
+class Memo
+  include Enumerable
+
+  def initialize(path)
+    #@relative_path = path
+    @top_path = File.expand_path(path)
+  end
+
+  def Memo.add(path, str)
+    path = "#{path}/#{Time.now.strftime("%Y/%m/%d")}"
+    @top_path = File.expand_path(path)
+
+    file_no = Dir.glob("#{@top_path}#{'/*'}").to_a[0]
+    if not file_no
+      FileUtils.mkdir_p(@top_path)
+      file_no = -1
+    end
+    file_no += 1
+    memo_file = MemoFile.new("#{@top_path}/#{file_no}")
+    memo_file.contents = str
+  end
+
+  def path_depth
+    path = @top_path.split(/\//)[-3..-1]
+    if /[0-9]/ =~ path[2] and /[0-9]/ =~ path[1] and /[0-9]/ =~ path[0]
+      return 3
+    elsif /[0-9]/ =~ path[2] and /[0-9]/ =~ path[1]
+      return 2
+    elsif /[0-9]/ =~ path[2]
+      return 1
+    else
+      return 0
+    end
+  end
+
+  def each
+    count = 4-path_depth
+    Dir.glob("#{@top_path}#{'/*'*count}").lazy.each do |file|
+      yield MemoFile.new(file)
+    end
+  end
+
+  class MemoFile
+    def initialize(path)
+      @path = path
+    end
+    attr_reader :path
+
+    def date
+      @path.split('/')[-4..-1].join('/')
+    end
+
+    def title
+      File.open(@path) do |f|
+        f.readline.chomp
+      end
+    end
+
+    def contents
+      File.read(@path)
+    end
+
+    def contents=(str)
+      File.open(@path, 'w') do |f|
+        f << str
+      end
+    end
+
+    def search(str, option)
+      reg = Regexp.new(str, option)
+      reg =~ self.contents
+    end
+  end
+end
 
 #------- global variable
-Version = "0.0.5"
+Version = "0.0.6"
 MemoDir = File.expand_path('~/.rmemo')
 Editor = 'vim'
 #------- global variable
-
 
 #------- option
 option = {}
@@ -31,7 +95,7 @@ parser.banner += "Usage: #{File.basename($0)} {option}"
 parser.on("-a", "--add", "add memo."){
   option[:add] = true
 }
-parser.on("-d", "--date Date", String, "search range by date. Date is 20090131, 0131, 31,..."){|get_arg|
+parser.on("-d", "--date Date", String, "search range by date. Date is 2013,2013-01,2013-01-31,..."){|get_arg|
   option[:date] = get_arg
 }
 parser.on("-g", "--git OPTION", String, "git command to #{MemoDir}."){|get_arg|
@@ -86,92 +150,76 @@ if option.empty?
 end
 #------- option
 
-class String
-  #String convert to array of date
-  def to_date
-    case self.length
-    when 8 #year + mon + day
-      [self[0..3], self[4..5], self[6..7]]
-    when 6 #year + mon
-      [self[0..3], self[4..5]]
-    when 4 #year
-      [self[0..3]]
-    else
-      nil
-    end
-  end
-end
-
-#add new memo
-def add(memo)
-  tmp = Tempfile.open('memo', MemoDir)
-  tmp.close
-
-  system("#{Editor} #{tmp.path}")
-  str = File.open(tmp.path, 'r').read
-  memo.add(str) unless str.empty?
-end
-
 dir = 'memo'
-dir = option[:dir] if option.include?(:dir)
-dir = File.join(MemoDir, dir)
-FileUtils.mkdir_p(dir) unless Dir.exist?(dir)
-memo = Memo.new(dir)
+if option.key?(:date)
+  sub_dir = option[:date].split('-')
+  dir = [dir] + sub_dir
+  dir = dir.join('/')
+end
 
-format = []
-ary = []
-year = nil
-mon = nil
-day = nil
+rmemo = Memo.new("~/.rmemo/#{dir}")
+rmemo_enum = rmemo.lazy.each_with_index
+
 option.each do |key, val|
   case key
+  when :version
+    puts Version
+    exit
+  when :add
+    tmp = Tempfile.open('memo', MemoDir)
+
+    system("#{Editor} #{tmp.path}")
+    str = File.open(tmp.path, 'r').read
+    Memo.add("~/.rmemo/#{dir}", str) unless str.empty?
+
+    tmp.close(true)
+    exit
   when :git
     unless Dir.exist?(File.join(MemoDir, ".git"))
-      STDERR.puts "Error'Not found git directory."
+      $stderr.puts "Error'Not found git directory."
       exit(1)
     end
     Dir.chdir(MemoDir)
     system("git #{option[:git]}")
-    exit(0)
-  when :add
-    add(memo)
-    exit
-  when :date
-    date = option[:date].to_date
-    if date
-      year = date[0]
-      mon  = date[1]
-      day  = date[2]
-    end
-  when :count,:fullpath,:random,:put,:title
-    format << key
-    ary = memo.list(year, mon, day) if ary.empty?
-  when :search
-    ary = memo.list(year, mon, day).search(val, option[:reg_opt])
-  when :version
-    puts Version
     exit
   end
 end
 
-ary = ary.reverse if option.include?(:reverse)
-ary = ary[option[:number]] if option.include?(:number)
-if ary.class == Memo::MemoFile
-  ary = [ary].to_memo
+option.each do |key, val|
+  case key
+  when :number
+    rmemo_enum = rmemo_enum.to_a[val]
+  when :search
+    rmemo_enum = rmemo_enum.lazy.select{|memo,i|[memo,i] if memo.search(val, option[:reg_opt])}
+  end
 end
 
-case format[-1]
-when :count
-  puts ary.size
-when :fullpath
-  puts ary.map{|v|v.to_p}
-when :put
-  puts ary.map{|v|v.read}
-when :random
-  srand(Time.now.to_i)
-  puts ary[rand(ary.size)].read
-when :title
-  puts ary.map{|v|v.to_s}
-else
-  puts ary.map{|v|v.read}
+option.each do |key, val|
+  case key
+  when :reverse
+    rmemo_enum = rmemo_enum.lazy.reverse_each
+  when :count
+    puts rmemo_enum.to_a.count
+    exit
+  end
+end
+
+option.each do |key, val|
+  case key
+  when :fullpath
+    rmemo_enum.each do |memo,i|
+      #puts "#{i}:[#{memo.path}]@ #{memo.title}"
+      puts "[#{memo.path}]@ #{memo.title}"
+    end
+  when :put
+    rmemo_enum.each do |memo,i|
+      puts memo.contents
+      puts ""
+    end
+  when :title
+    rmemo_enum.lazy.each do |memo,i|
+      #puts "#{i}:[#{memo.date}]@ #{memo.title}"
+      puts "[#{memo.date}]@ #{memo.title}"
+    end
+  end
 end
