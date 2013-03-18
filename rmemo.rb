@@ -7,9 +7,9 @@ require 'tempfile'
 class Memo
   include Enumerable
 
-  def initialize(path)
-    #@relative_path = path
+  def initialize(path, reverse)
     @top_path = File.expand_path(path)
+    @reverse = reverse
   end
 
   def Memo.add(path, str)
@@ -41,8 +41,15 @@ class Memo
 
   def each
     count = 4-path_depth
-    Dir.glob("#{@top_path}#{'/*'*count}").lazy.each do |file|
-      yield MemoFile.new(file)
+    if @reverse
+      Dir.glob("#{@top_path}#{'/*'*count}").lazy.each do |file|
+        yield MemoFile.new(file)
+      end
+    else
+      #最新の情報がでるように、デフォルトはreverse_eachを使う
+      Dir.glob("#{@top_path}#{'/*'*count}").lazy.reverse_each do |file|
+        yield MemoFile.new(file)
+      end
     end
   end
 
@@ -80,7 +87,7 @@ class Memo
 end
 
 #------- global variable
-Version = "0.0.6"
+Version = "0.0.6.1"
 MemoDir = File.expand_path('~/.rmemo')
 Editor = 'vim'
 #------- global variable
@@ -157,7 +164,9 @@ if option.key?(:date)
   dir = dir.join('/')
 end
 
-rmemo = Memo.new("~/.rmemo/#{dir}")
+reverse = false
+reverse = true if option.key?(:reverse)
+rmemo = Memo.new("~/.rmemo/#{dir}", reverse)
 rmemo_enum = rmemo.lazy.each_with_index
 
 option.each do |key, val|
