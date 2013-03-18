@@ -4,6 +4,12 @@ require 'optparse'
 require 'fileutils'
 require 'tempfile'
 
+#------- global variable
+Version = "0.0.7"
+MemoDir = File.expand_path('~/.rmemo')
+Editor = 'vim'
+#------- global variable
+
 class Memo
   include Enumerable
 
@@ -86,12 +92,6 @@ class Memo
   end
 end
 
-#------- global variable
-Version = "0.0.6.1"
-MemoDir = File.expand_path('~/.rmemo')
-Editor = 'vim'
-#------- global variable
-
 #------- option
 option = {}
 
@@ -167,7 +167,7 @@ end
 reverse = false
 reverse = true if option.key?(:reverse)
 rmemo = Memo.new("~/.rmemo/#{dir}", reverse)
-rmemo_enum = rmemo.lazy.each_with_index
+rmemo_enum = rmemo.lazy.each
 
 option.each do |key, val|
   case key
@@ -196,39 +196,36 @@ end
 
 option.each do |key, val|
   case key
-  when :number
-    rmemo_enum = rmemo_enum.to_a[val]
   when :search
-    rmemo_enum = rmemo_enum.lazy.select{|memo,i|[memo,i] if memo.search(val, option[:reg_opt])}
+    rmemo_enum = rmemo_enum.lazy.select{|memo|memo if memo.search(val, option[:reg_opt])}
   end
 end
 
 option.each do |key, val|
   case key
-  when :reverse
-    rmemo_enum = rmemo_enum.lazy.reverse_each
   when :count
     puts rmemo_enum.to_a.count
     exit
+  when :number
+    val = val...val+1 if val.kind_of?(Fixnum)
+    rmemo_enum = rmemo_enum.to_a[val]
   end
 end
 
 option.each do |key, val|
   case key
   when :fullpath
-    rmemo_enum.each do |memo,i|
-      #puts "#{i}:[#{memo.path}]@ #{memo.title}"
-      puts "[#{memo.path}]@ #{memo.title}"
+    rmemo_enum.each_with_index do |memo,i|
+      puts "#{i}:[#{memo.path}]@ #{memo.title}"
     end
   when :put
-    rmemo_enum.each do |memo,i|
+    rmemo_enum.each_with_index do |memo,i|
       puts memo.contents
       puts ""
     end
   when :title
-    rmemo_enum.lazy.each do |memo,i|
-      #puts "#{i}:[#{memo.date}]@ #{memo.title}"
-      puts "[#{memo.date}]@ #{memo.title}"
+    rmemo_enum.lazy.each_with_index do |memo,i|
+      puts "#{i}:[#{memo.date}]@ #{memo.title}"
     end
   end
 end

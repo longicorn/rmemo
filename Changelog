@@ -1,5 +1,16 @@
 2013-03-18  longicorn <longicorn.c@gmail.com>
 
+	* release 0.0.7
+	* 細かいバグ修正
+	* title,fullpathオプションに行番号を追加。これは、numberオプションで使える
+
+2013-03-18  longicorn <longicorn.c@gmail.com>
+
+	* release 0.0.6.1
+	* reverseオプションのバグ修正
+
+2013-03-18  longicorn <longicorn.c@gmail.com>
+
 	* release 0.0.6
 	* for ruby 2.0.0
 	* 2.0出たので、作り直し。基本的に機能は同じはず。
