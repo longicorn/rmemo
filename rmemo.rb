@@ -5,7 +5,7 @@ require 'fileutils'
 require 'tempfile'
 
 #------- global variable
-Version = "0.0.7"
+Version = "0.0.8"
 MemoDir = File.expand_path('~/.rmemo')
 Editor = 'vim'
 #------- global variable
@@ -125,7 +125,8 @@ parser.on("-r", "--reverse", "reverse out puts."){
   option[:reverse] = true
 }
 parser.on("-s", "--search PATTERN", String, "puts search result."){|get_arg|
-  option[:search] = get_arg
+  option[:search] = [] if not option[:search]
+  option[:search]<<get_arg
 }
 parser.on("-t", "--title", "puts title of memo."){
   option[:title] = true
@@ -197,7 +198,9 @@ end
 option.each do |key, val|
   case key
   when :search
-    rmemo_enum = rmemo_enum.lazy.select{|memo|memo if memo.search(val, option[:reg_opt])}
+    val.each do |v|
+      rmemo_enum = rmemo_enum.lazy.select{|memo|memo if memo.search(v, option[:reg_opt])}
+    end
   end
 end
 

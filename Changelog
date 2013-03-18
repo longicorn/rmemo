@@ -1,5 +1,10 @@
 2013-03-18  longicorn <longicorn.c@gmail.com>
 
+	* release 0.0.8
+	* searchで複数検索が可能に。"-s hoge -s fuga"
+
+2013-03-18  longicorn <longicorn.c@gmail.com>
+
 	* release 0.0.7
 	* 細かいバグ修正
 	* title,fullpathオプションに行番号を追加。これは、numberオプションで使える
