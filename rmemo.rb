@@ -5,7 +5,7 @@ require 'fileutils'
 require 'tempfile'
 
 #------- global variable
-Version = "0.0.8.1"
+Version = "0.0.8.2"
 MemoDir = File.expand_path('~/.rmemo')
 Editor = 'vim'
 #------- global variable
@@ -160,6 +160,7 @@ end
 #------- option
 
 dir = 'memo'
+dir = option[:dir] if option[:dir]
 if option.key?(:date)
   sub_dir = option[:date].split('-')
   dir = [dir] + sub_dir

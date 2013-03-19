@@ -1,5 +1,10 @@
 2013-03-19  longicorn <longicorn.c@gmail.com>
 
+	* release 0.0.8.2
+	* -dオプションが動作しない問題対応
+
+2013-03-19  longicorn <longicorn.c@gmail.com>
+
 	* release 0.0.8.1
 	* searchで複数検索の-iが動作しないバグを修正
 
