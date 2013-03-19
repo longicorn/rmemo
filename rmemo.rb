@@ -5,7 +5,7 @@ require 'fileutils'
 require 'tempfile'
 
 #------- global variable
-Version = "0.0.8"
+Version = "0.0.8.1"
 MemoDir = File.expand_path('~/.rmemo')
 Editor = 'vim'
 #------- global variable
@@ -109,7 +109,8 @@ parser.on("-g", "--git OPTION", String, "git command to #{MemoDir}."){|get_arg|
   option[:git] = get_arg
 }
 parser.on("-i", "--ignore-case", "Ignore case distinctions. use with -s option"){
-  option[:reg_opt] = 'i'
+  option[:reg_opt] = [] if not option[:reg_opt]
+  option[:reg_opt] << 'i'
 }
 parser.on("-f", "--fullpath", "put full path format."){
   option[:fullpath] = true
@@ -126,7 +127,7 @@ parser.on("-r", "--reverse", "reverse out puts."){
 }
 parser.on("-s", "--search PATTERN", String, "puts search result."){|get_arg|
   option[:search] = [] if not option[:search]
-  option[:search]<<get_arg
+  option[:search] << get_arg
 }
 parser.on("-t", "--title", "puts title of memo."){
   option[:title] = true
@@ -198,8 +199,8 @@ end
 option.each do |key, val|
   case key
   when :search
-    val.each do |v|
-      rmemo_enum = rmemo_enum.lazy.select{|memo|memo if memo.search(v, option[:reg_opt])}
+    val.zip(option[:reg_opt]).each do |v,r|
+      rmemo_enum = rmemo_enum.lazy.select{|memo|memo if memo.search(v, r)}
     end
   end
 end
