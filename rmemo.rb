@@ -5,7 +5,7 @@ require 'fileutils'
 require 'tempfile'
 
 #------- global variable
-Version = "0.0.8.2"
+Version = "0.0.9"
 MemoDir = File.expand_path('~/.rmemo')
 Editor = 'vim'
 #------- global variable
@@ -22,12 +22,10 @@ class Memo
     path = "#{path}/#{Time.now.strftime("%Y/%m/%d")}"
     @top_path = File.expand_path(path)
 
-    file_no = Dir.glob("#{@top_path}#{'/*'}").to_a[0]
-    if not file_no
+    file_no = Dir.glob("#{@top_path}#{'/*'}").length
+    if file_no == 0
       FileUtils.mkdir_p(@top_path)
-      file_no = -1
     end
-    file_no += 1
     memo_file = MemoFile.new("#{@top_path}/#{file_no}")
     memo_file.contents = str
   end
@@ -105,6 +103,9 @@ parser.on("-a", "--add", "add memo."){
 parser.on("-d", "--date Date", String, "search range by date. Date is 2013,2013-01,2013-01-31,..."){|get_arg|
   option[:date] = get_arg
 }
+parser.on("-e", "--edit", String, "edit file, but condision is desided one file."){|get_arg|
+  option[:edit] = true
+}
 parser.on("-g", "--git OPTION", String, "git command to #{MemoDir}."){|get_arg|
   option[:git] = get_arg
 }
@@ -174,9 +175,6 @@ rmemo_enum = rmemo.lazy.each
 
 option.each do |key, val|
   case key
-  when :version
-    puts Version
-    exit
   when :add
     tmp = Tempfile.open('memo', MemoDir)
 
@@ -193,6 +191,9 @@ option.each do |key, val|
     end
     Dir.chdir(MemoDir)
     system("git #{option[:git]}")
+    exit
+  when :version
+    puts Version
     exit
   end
 end
@@ -219,6 +220,9 @@ end
 
 option.each do |key, val|
   case key
+  when :edit
+    system("#{Editor} #{rmemo_enum.to_a[0].path}")
+    exit
   when :fullpath
     rmemo_enum.each_with_index do |memo,i|
       puts "#{i}:[#{memo.path}]@ #{memo.title}"
