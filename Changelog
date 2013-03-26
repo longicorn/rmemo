@@ -1,3 +1,9 @@
+2013-03-26  longicorn <longicorn.c@gmail.com>
+
+	* release 0.0.9
+	* -eオプションで、ファイル編集が可能に。
+	* bug fix
+
 2013-03-19  longicorn <longicorn.c@gmail.com>
 
 	* release 0.0.8.2
