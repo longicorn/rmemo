@@ -202,7 +202,6 @@ end
 option.each do |key, val|
   case key
   when :search
-    p val
     val.zip(option[:reg_opt]).each do |v,r|
       rmemo_enum = rmemo_enum.lazy.select{|memo|memo if memo.search(v, r)}
     end
