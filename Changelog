@@ -1,5 +1,10 @@
 2013-03-26  longicorn <longicorn.c@gmail.com>
 
+	* release 0.0.9.1
+	* bug fix -sオプションで、-iが無い場合のエラーを修正
+
+2013-03-26  longicorn <longicorn.c@gmail.com>
+
 	* release 0.0.9
 	* -eオプションで、ファイル編集が可能に。
 	* bug fix
