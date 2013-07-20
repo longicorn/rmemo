@@ -16,6 +16,20 @@ MemoDir = File.expand_path('~/.rmemo')
 Editor = 'vim'
 #------- global variable
 
+class String
+  def to_regxp
+    return @reg if @reg
+
+    begin
+      obj = eval(self)
+      reg = obj if obj.class == Regexp
+    rescue
+      reg = Regexp.new(self)
+    end
+    @reg = reg
+  end
+end
+
 class Memo
   include Enumerable
 
@@ -91,8 +105,8 @@ class Memo
       end
     end
 
-    def search(str, option)
-      reg = Regexp.new(str, option)
+    def search(str)
+      reg = str.to_regxp
       reg =~ self.contents
     end
   end
@@ -137,7 +151,6 @@ parser.on("-r", "--reverse", "reverse out puts."){
 parser.on("-s", "--search PATTERN", String, "puts search result."){|get_arg|
   option[:search] = [] if not option[:search]
   option[:search] << get_arg
-  option[:reg_opt] = [] if not option[:reg_opt]
 }
 parser.on("-t", "--title", "puts title of memo."){
   option[:title] = true
@@ -210,8 +223,8 @@ end
 option.each do |key, val|
   case key
   when :search
-    val.zip(option[:reg_opt]).each do |v,r|
-      rmemo_enum = rmemo_enum.lazy.select{|memo|memo if memo.search(v, r)}
+    val.each do |v|
+      rmemo_enum = rmemo_enum.lazy.select{|memo|memo if memo.search(v)}
     end
   end
 end

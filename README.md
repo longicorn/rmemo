@@ -19,9 +19,11 @@ Rmemo view first line to be memo's title
 
 ## search
    $ rmemo.rb -s linux
+   $ rmemo.rb -s /linux/
 
 ### search:ignore
-   $ rmemo.rb -is linux 
+   $ rmemo.rb -is linux
+   $ rmemo.rb -s /linux/i
 
 ### search and title print
    $ rmemo.rb -ts linux
