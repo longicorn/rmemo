@@ -1,5 +1,5 @@
 # rmemo
-Rmemo is memo tool. rmemo written by ruby
+Rmemo is memo tool. rmemo is written by ruby
 Rmemo like seem howm. howm run on editer, but rmemo is CLI.
 
 # file
