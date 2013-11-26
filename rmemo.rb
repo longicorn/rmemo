@@ -11,20 +11,20 @@ require 'fileutils'
 require 'tempfile'
 
 #------- global variable
-Version = "0.0.9.1"
+Version = "0.0.9.2"
 MemoDir = File.expand_path('~/.rmemo')
 Editor = 'vim'
 #------- global variable
 
 class String
-  def to_regxp
+  def to_regxp(option=nil)
     return @reg if @reg
 
     begin
       obj = eval(self)
       reg = obj if obj.class == Regexp
     rescue
-      reg = Regexp.new(self)
+      reg = Regexp.new(self, option=option)
     end
     @reg = reg
   end
@@ -105,8 +105,8 @@ class Memo
       end
     end
 
-    def search(str)
-      reg = str.to_regxp
+    def search(str, option=nil)
+      reg = str.to_regxp(option)
       reg =~ self.contents
     end
   end
@@ -224,7 +224,7 @@ option.each do |key, val|
   case key
   when :search
     val.each do |v|
-      rmemo_enum = rmemo_enum.lazy.select{|memo|memo if memo.search(v)}
+      rmemo_enum = rmemo_enum.lazy.select{|memo|memo if memo.search(v, option[:reg_opt])}
     end
   end
 end
