@@ -11,7 +11,7 @@ require 'fileutils'
 require 'tempfile'
 
 #------- global variable
-Version = "0.0.9.2"
+Version = "0.0.9.3"
 MemoDir = File.expand_path('~/.rmemo')
 Editor = 'vim'
 #------- global variable
@@ -27,6 +27,24 @@ class String
       reg = Regexp.new(self, option=option)
     end
     @reg = reg
+  end
+
+  def with_color(options=nil)
+    return self unless options
+
+    nums = []
+    escape = "\e[%sm"
+
+    colors = {black:'0', red:'1', green:'2', yellow:'3', blue:'4', magenta:'5', cyan:'6', white:'7'}
+    nums << '3'+colors[options[:color].to_sym] if options[:color]
+    nums << '4'+colors[options[:backgrand].to_sym] if options[:backgrand]
+
+    attrs = {bold:'1', low:'2', underline:'4', blink:'5', reverse:'7', invisible:'8'}
+    nums << attrs[options[:attr].to_sym] if options[:attr]
+
+    head = escape % nums.join(':')
+    tail = escape % ""
+    return head + self + tail
   end
 end
 
@@ -128,6 +146,11 @@ parser.on("-d", "--date Date", String, "search range by date. Date is 2013,2013-
 parser.on("-e", "--edit", String, "edit file, but condision is desided one file."){|get_arg|
   option[:edit] = true
 }
+
+parser.on("-E", "--disable-escape", String, "disable output escape."){|get_arg|
+  option[:disable_escape] = true
+}
+
 parser.on("-g", "--git OPTION", String, "git command to #{MemoDir}."){|get_arg|
   option[:git] = get_arg
 }
@@ -256,7 +279,10 @@ option.each do |key, val|
     end
   when :title
     rmemo_enum.lazy.each_with_index do |memo,i|
-      puts "#{i}:[#{memo.date}]@ #{memo.title}"
+      options = nil
+      options = (i%2).zero? ? {attr:'bold'} : nil unless option.has_key?(:disable_escape)
+
+      puts "#{i}:[#{memo.date}]@ #{memo.title}".with_color(options)
     end
   end
 end
