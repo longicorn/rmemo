@@ -11,7 +11,7 @@ require 'fileutils'
 require 'tempfile'
 
 #------- global variable
-Version = "0.0.9.3"
+Version = "0.0.9.4"
 MemoDir = File.expand_path('~/.rmemo')
 Editor = 'vim'
 #------- global variable
@@ -23,7 +23,7 @@ class String
     begin
       obj = eval(self)
       reg = obj if obj.class == Regexp
-    rescue
+    rescue Exception
       reg = Regexp.new(self, option=option)
     end
     @reg = reg
