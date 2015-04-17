@@ -1,5 +1,7 @@
 #!/usr/bin/env ruby
 
+Signal.trap("INT") {exit}
+
 if RUBY_VERSION.split('.')[0].to_i < 2
   puts 'ruby version is low!'
   puts 'ruby update >=2.0.0, please!'
