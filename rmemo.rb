@@ -13,7 +13,7 @@ require 'fileutils'
 require 'tempfile'
 
 #------- global variable
-Version = "0.0.9.5"
+Version = "0.0.9.6"
 MemoDir = File.expand_path('~/.rmemo')
 Editor = 'vim'
 #------- global variable
@@ -161,6 +161,7 @@ parser.on("-i", "--ignore-case", "Ignore case distinctions. use with -s option")
   option[:reg_opt] << 'i'
 }
 parser.on("-f", "--fullpath", "put full path format."){
+  option.delete(:title)
   option[:fullpath] = true
 }
 parser.on("-n", "--num [NUMBER]", String, "puts number memo. NUMBER is 0,1,2,..., 0..9"){|get_arg|
@@ -178,6 +179,7 @@ parser.on("-s", "--search PATTERN", String, "puts search result."){|get_arg|
   option[:search] << get_arg
 }
 parser.on("-t", "--title", "puts title of memo."){
+  option.delete(:fullpath)
   option[:title] = true
 }
 parser.on("-v", "--version", "print rmemo.rb version and quit."){
@@ -270,21 +272,22 @@ option.each do |key, val|
   when :edit
     system("#{Editor} #{rmemo_enum.to_a[0].path}")
     exit
-  when :fullpath
+  when :fullpath,:title
     rmemo_enum.each_with_index do |memo,i|
-      puts "#{i}:[#{memo.path}]@ #{memo.title}"
+      options = nil
+      options = (i%2).zero? ? {attr:'bold'} : nil unless option.has_key?(:disable_escape)
+
+      if key == :fullpath
+        info = memo.path
+      elsif key == :title
+        info = memo.date
+      end
+      puts "#{i}:[#{info}]@ #{memo.title}".with_color(options)
     end
   when :put
     rmemo_enum.each_with_index do |memo,i|
       puts memo.contents
       puts ""
-    end
-  when :title
-    rmemo_enum.lazy.each_with_index do |memo,i|
-      options = nil
-      options = (i%2).zero? ? {attr:'bold'} : nil unless option.has_key?(:disable_escape)
-
-      puts "#{i}:[#{memo.date}]@ #{memo.title}".with_color(options)
     end
   end
 end
