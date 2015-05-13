@@ -1,3 +1,9 @@
+2015-04-13  longicorn <longicorn.c@gmail.com>
+
+	* release 0.0.9.6
+	* 0.0.9.2以降のChangelogは書き忘れ
+	* -f -tオプションのどちらかのみを有効に
+
 2013-03-26  longicorn <longicorn.c@gmail.com>
 
 	* release 0.0.9.1
