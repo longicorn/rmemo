@@ -13,7 +13,7 @@ require 'fileutils'
 require 'tempfile'
 
 #------- global variable
-Version = "0.0.9.6"
+Version = "0.0.9.7"
 MemoDir = File.expand_path('~/.rmemo')
 Editor = 'vim'
 #------- global variable
@@ -23,9 +23,10 @@ class String
     return @reg if @reg
 
     begin
+      raise unless self =~ /\/.*\/[[:alpha:]]/
       obj = eval(self)
       reg = obj if obj.class == Regexp
-    rescue Exception
+    rescue => e
       reg = Regexp.new(self, option=option)
     end
     @reg = reg
