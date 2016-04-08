@@ -13,7 +13,7 @@ require 'fileutils'
 require 'tempfile'
 
 #------- global variable
-Version = "0.0.9.7"
+Version = "0.0.9.8"
 MemoDir = File.expand_path('~/.rmemo')
 Editor = 'vim'
 #------- global variable
@@ -154,7 +154,7 @@ parser.on("-E", "--disable-escape", String, "disable output escape."){|get_arg|
   option[:disable_escape] = true
 }
 
-parser.on("-g", "--git OPTION", String, "git command to #{MemoDir}."){|get_arg|
+parser.on("-g", "--git OPTION", String, "git root path:#{MemoDir}"){|get_arg|
   option[:git] = get_arg
 }
 parser.on("-i", "--ignore-case", "Ignore case distinctions. use with -s option"){
@@ -287,7 +287,12 @@ option.each do |key, val|
     end
   when :put
     rmemo_enum.each_with_index do |memo,i|
-      puts memo.contents
+      contents = memo.contents
+      option[:search].each do |key|
+        key2 = key.with_color({color:'red'})
+        contents = contents.gsub(/#{key}/, key2)
+      end if option.include?(:search)
+      puts contents
       puts ""
     end
   end
