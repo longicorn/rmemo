@@ -13,23 +13,24 @@ require 'fileutils'
 require 'tempfile'
 
 #------- global variable
-Version = "0.0.9.8"
+Version = "0.0.9.9"
 MemoDir = File.expand_path('~/.rmemo')
 Editor = 'vim'
 #------- global variable
 
 class String
   def to_regxp(option=nil)
-    return @reg if @reg
+    #return @reg if @reg
 
     begin
-      raise unless self =~ /\/.*\/[[:alpha:]]/
+      raise unless self =~ /\/.*\/[[:alpha:]]/o
       obj = eval(self)
       reg = obj if obj.class == Regexp
     rescue => e
       reg = Regexp.new(self, option=option)
     end
-    @reg = reg
+    #@reg = reg
+    reg
   end
 
   def with_color(options=nil)
