@@ -264,7 +264,7 @@ option.each do |key, val|
     puts rmemo_enum.to_a.count
     exit
   when :number
-    val = val...val+1 if val.kind_of?(Fixnum)
+    val = val...val+1 if val.kind_of?(Integer)
     rmemo_enum = rmemo_enum.to_a[val]
   end
 end
