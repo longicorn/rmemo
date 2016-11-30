@@ -13,7 +13,7 @@ require 'fileutils'
 require 'tempfile'
 
 #------- global variable
-Version = "0.0.9.9"
+Version = "0.0.9.10"
 MemoDir = File.expand_path('~/.rmemo')
 Editor = 'vim'
 #------- global variable
