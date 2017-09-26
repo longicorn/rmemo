@@ -13,7 +13,7 @@ require 'fileutils'
 require 'tempfile'
 
 #------- global variable
-Version = "0.0.9.10"
+Version = "0.0.9.11"
 MemoDir = File.expand_path('~/.rmemo')
 Editor = 'vim'
 #------- global variable
@@ -199,14 +199,10 @@ parser.on("-R", "--random", "random puts memo."){
 
 begin
   parser.parse!
+  raise OptionParser::ParseError if option.empty?
 rescue OptionParser::ParseError => err
   $stderr.puts err.message
   $stderr.puts parser.help
-  exit 1
-end
-
-if option.empty?
-  puts parser.help
   exit 1
 end
 #------- option
