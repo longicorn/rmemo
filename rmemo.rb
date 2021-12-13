@@ -1,4 +1,5 @@
 #!/usr/bin/env ruby
+#!/home/yasusi/.rbenv/shims/ruby --jit
 
 Signal.trap("INT") {exit}
 
@@ -13,7 +14,7 @@ require 'fileutils'
 require 'tempfile'
 
 #------- global variable
-Version = "0.0.9.11"
+Version = "0.0.9.12"
 MemoDir = File.expand_path('~/.rmemo')
 Editor = 'vim'
 #------- global variable
@@ -54,7 +55,6 @@ end
 
 class Memo
   include Enumerable
-
   def initialize(path, reverse)
     @top_path = File.expand_path(path)
     @reverse = reverse
@@ -271,6 +271,7 @@ option.each do |key, val|
     system("#{Editor} #{rmemo_enum.to_a[0].path}")
     exit
   when :fullpath,:title
+    memos_carry_size = rmemo_enum.count.to_s.size
     rmemo_enum.each_with_index do |memo,i|
       options = nil
       options = (i%2).zero? ? {attr:'bold'} : nil unless option.has_key?(:disable_escape)
@@ -280,7 +281,8 @@ option.each do |key, val|
       elsif key == :title
         info = memo.date
       end
-      puts "#{i}:[#{info}]@ #{memo.title}".with_color(options)
+      is = sprintf("%#{memos_carry_size}d", i)
+      puts "#{is}:[#{info}]@ #{memo.title}".with_color(options)
     end
   when :put
     rmemo_enum.each_with_index do |memo,i|
