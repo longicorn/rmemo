@@ -266,9 +266,15 @@ option.each do |key, val|
 end
 
 option.each do |key, val|
+  rmemo_enum = rmemo_enum.to_a
+  if rmemo_enum.count.zero?
+    STDERR.puts "Error: memo not found"
+    exit 1
+  end
+
   case key
   when :edit
-    system("#{Editor} #{rmemo_enum.to_a[0].path}")
+    system("#{Editor} #{rmemo_enum[0].path}")
     exit
   when :fullpath,:title
     memos_carry_size = rmemo_enum.count.to_s.size
