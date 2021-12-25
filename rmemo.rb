@@ -1,5 +1,4 @@
 #!/usr/bin/env ruby
-#!/home/yasusi/.rbenv/shims/ruby --jit
 
 Signal.trap("INT") {exit}
 
