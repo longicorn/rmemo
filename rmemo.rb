@@ -167,7 +167,11 @@ parser.on("-f", "--fullpath", "put full path format."){
 }
 parser.on("-n", "--num [NUMBER]", String, "puts number memo. NUMBER is 0,1,2,..., 0..9"){|get_arg|
   option[:number] = 0..9
-  option[:number] = eval(get_arg) if get_arg
+  option[:number] = get_arg.to_i if get_arg
+  if option[:number].zero?
+    STDERR.puts "Argument Error"
+    exit 1
+  end
 }
 parser.on("-p", "--put", "puts all memo."){
   option[:put] = true
