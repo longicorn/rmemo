@@ -13,7 +13,7 @@ require 'fileutils'
 require 'tempfile'
 
 #------- global variable
-Version = "0.0.9.14"
+Version = "0.0.9.13"
 MemoDir = File.expand_path('~/.rmemo')
 Editor = 'vim'
 #------- global variable
@@ -167,12 +167,10 @@ parser.on("-f", "--fullpath", "put full path format."){
 }
 parser.on("-n", "--num [NUMBER]", String, "puts number memo. NUMBER is 0,1,2,..., 0..9"){|get_arg|
   option[:number] = 0..9
-  if get_arg
-    option[:number] = get_arg.to_i
-    if get_arg != option[:number].to_s
-      STDERR.puts "Argument Error"
-      exit 1
-    end
+  option[:number] = eval(get_arg) rescue nil if get_arg
+  unless option[:number]
+    STDERR.puts "Argument Error"
+    exit 1
   end
 }
 parser.on("-p", "--put", "puts all memo."){
