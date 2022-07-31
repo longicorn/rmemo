@@ -85,17 +85,19 @@ class Memo
   end
 
   def each
-    count = 4-path_depth
+    count = 3 - path_depth
     if @reverse
-      #Dir.glob("#{@top_path}#{'/*'*count}").lazy.each do |file|
-      Dir.glob("#{@top_path}#{'/*'*count}").sort.lazy.each do |file|
-        yield MemoFile.new(file)
+      Dir.glob("#{@top_path}#{'/*'*count}").each do |path|
+        Dir.glob("#{path}/*").each.sort_by{|v|v.split('/')[-1].to_i}.each do |file|
+          yield MemoFile.new(file)
+        end
       end
     else
       #最新の情報がでるように、デフォルトはreverse_eachを使う
-      Dir.glob("#{@top_path}#{'/*'*count}").sort.lazy.reverse_each do |file|
-        next if File.directory?(file)
-        yield MemoFile.new(file)
+      Dir.glob("#{@top_path}#{'/*'*count}").reverse_each do |path|
+        Dir.glob("#{path}/*").each.sort_by{|v|v.split('/')[-1].to_i}.reverse_each do |file|
+          yield MemoFile.new(file)
+        end
       end
     end
   end
