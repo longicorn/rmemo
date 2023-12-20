@@ -13,7 +13,7 @@ require 'fileutils'
 require 'tempfile'
 
 #------- global variable
-Version = "0.0.9.15"
+Version = "0.0.9.16"
 MemoDir = File.expand_path('~/.rmemo')
 Editor = 'vim'
 #------- global variable
@@ -195,7 +195,14 @@ parser.on("-v", "--version", "print rmemo.rb version and quit."){
 parser.on("-C", "--count", "memo count."){
   option[:count] = true
 }
-parser.on("-D", "--dir DIR", String, "set memo dir."){|get_arg|
+parser.on("-D", "--dir [DIR]", String, "set memo dir."){|get_arg|
+  unless get_arg
+    top_path = File.expand_path('~/.rmemo')
+    Dir.glob("#{top_path}/*").each do |path|
+      puts path.split('/')[-1]
+    end
+    exit
+  end
   option[:dir] = get_arg
 }
 parser.on("-R", "--random", "random puts memo."){
