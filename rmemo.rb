@@ -12,11 +12,9 @@ require 'optparse'
 require 'fileutils'
 require 'tempfile'
 
-#------- global variable
-Version = "0.0.9.16"
-MemoDir = File.expand_path('~/.rmemo')
-Editor = 'vim'
-#------- global variable
+VERSION = "0.0.9.16"
+MEMODIR = File.expand_path('~/.rmemo')
+EDITOR = 'vim'
 
 class String
   def to_regxp(option=nil)
@@ -140,7 +138,7 @@ option = {}
 
 parser = OptionParser.new
 parser.banner = "rmemo.rb is CLI based memo tool by ruby.\n"
-parser.banner += "Memo's directory is \"#{MemoDir}\".\n"
+parser.banner += "Memo's directory is \"#{MEMODIR}\".\n"
 parser.banner += "Usage: #{File.basename($0)} {option}"
 parser.on("-a", "--add", "add memo."){
   option[:add] = true
@@ -156,7 +154,7 @@ parser.on("-E", "--disable-escape", String, "disable output escape."){|get_arg|
   option[:disable_escape] = true
 }
 
-parser.on("-g", "--git OPTION", String, "git root path:#{MemoDir}"){|get_arg|
+parser.on("-g", "--git OPTION", String, "git root path:#{MEMODIR}"){|get_arg|
   option[:git] = get_arg
 }
 parser.on("-i", "--ignore-case", "Ignore case distinctions. use with -s option"){
@@ -235,24 +233,24 @@ rmemo_enum = rmemo.lazy.each
 option.each do |key, val|
   case key
   when :add
-    tmp = Tempfile.open('memo', MemoDir)
+    tmp = Tempfile.open('memo', MEMODIR)
 
-    system("#{Editor} #{tmp.path}")
+    system("#{EDITOR} #{tmp.path}")
     str = File.open(tmp.path, 'r').read
     Memo.add("~/.rmemo/#{dir}", str) unless str.empty?
 
     tmp.close(true)
     exit
   when :git
-    unless Dir.exist?(File.join(MemoDir, ".git"))
+    unless Dir.exist?(File.join(MEMODIR, ".git"))
       $stderr.puts "Error'Not found git directory."
       exit(1)
     end
-    Dir.chdir(MemoDir)
+    Dir.chdir(MEMODIR)
     system("git #{option[:git]}")
     exit
   when :version
-    puts Version
+    puts VERSION
     exit
   end
 end
@@ -286,7 +284,7 @@ option.each do |key, val|
 
   case key
   when :edit
-    system("#{Editor} #{rmemo_enum[0].path}")
+    system("#{EDITOR} #{rmemo_enum[0].path}")
     exit
   when :fullpath,:title
     memos_carry_size = rmemo_enum.count.to_s.size
