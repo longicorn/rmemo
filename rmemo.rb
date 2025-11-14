@@ -14,7 +14,7 @@ require 'tempfile'
 
 VERSION = "0.0.9.16"
 MEMODIR = File.expand_path('~/.rmemo')
-EDITOR = 'vim'
+EDITOR = ENV['EDITOR'] || 'vim'
 
 class String
   def to_regxp(option=nil)
