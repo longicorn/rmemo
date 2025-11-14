@@ -194,11 +194,16 @@ parser.on("-C", "--count", "memo count."){
   option[:count] = true
 }
 parser.on("-D", "--dir [DIR]", String, "set memo dir."){|get_arg|
+  top_path = File.expand_path('~/.rmemo')
+  dirs = Dir.glob("#{top_path}/*").map{|path|path.split('/')[-1]}
+  if get_arg == 'D'
+    # お試し:-DDで現在のディレクトリから探す
+    current_dir = Dir.pwd
+    get_arg = dirs.select{|dir|current_dir.include?(dir)}.first
+  end
+
   unless get_arg
-    top_path = File.expand_path('~/.rmemo')
-    Dir.glob("#{top_path}/*").each do |path|
-      puts path.split('/')[-1]
-    end
+    $stderr.puts dirs.join("\n")
     exit
   end
   option[:dir] = get_arg
