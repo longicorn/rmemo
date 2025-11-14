@@ -12,7 +12,7 @@ require 'optparse'
 require 'fileutils'
 require 'tempfile'
 
-VERSION = "0.0.9.16"
+VERSION = "0.0.9.17"
 MEMODIR = File.expand_path('~/.rmemo')
 EDITOR = ENV['EDITOR'] || 'vim'
 
